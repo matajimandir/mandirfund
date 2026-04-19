@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mataji Mandir — Contribution Register</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f5;color:#111;font-size:14px}
+.app{max-width:700px;margin:0 auto;background:#fff;min-height:100vh;border-left:1px solid #ddd;border-right:1px solid #ddd}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#fff;border-bottom:1px solid #eee;position:sticky;top:0;z-index:10}
+.topbar-left{display:flex;align-items:center;gap:10px}
+.topbar-left .icon{font-size:22px}
+.topbar-left h1{font-size:15px;font-weight:700;color:#111}
+.topbar-left small{font-size:11px;color:#777;display:block}
+.top-right{display:flex;gap:8px;align-items:center}
+.admin-btn{font-size:11px;padding:5px 14px;border-radius:20px;border:1px solid #ccc;background:#fff;color:#555;cursor:pointer;font-weight:600}
+.admin-btn.on{background:#E6F1FB;color:#185FA5;border-color:#85B7EB}
+.sync-btn{font-size:11px;padding:5px 12px;border-radius:20px;border:1px solid #34A853;background:#fff;color:#34A853;cursor:pointer;font-weight:600}
+.sync-btn.saving{background:#34A853;color:#fff}
+.pin-wrap{background:rgba(0,0,0,0.4);padding:2rem 1rem;display:none}
+.pin-box{background:#fff;border-radius:12px;padding:24px 20px;max-width:260px;margin:0 auto;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.15)}
+.pin-box h3{font-size:14px;font-weight:700;margin-bottom:12px;color:#111}
+.pin-dots{display:flex;gap:12px;justify-content:center;margin-bottom:6px}
+.pd{width:13px;height:13px;border-radius:50%;border:2px solid #ccc;background:#fff;transition:background 0.15s}
+.pd.f{background:#1D9E75;border-color:#1D9E75}
+.perr{font-size:11px;color:#c00;min-height:16px;margin-bottom:8px}
+.numpad{display:grid;grid-template-columns:repeat(3,60px);gap:8px;justify-content:center}
+.nb{width:60px;height:46px;border-radius:8px;border:1px solid #ddd;background:#fff;color:#111;font-size:16px;cursor:pointer}
+.nb:active{background:#f0f0f0}
+.pin-hint{font-size:11px;color:#999;margin-top:8px}
+.pin-cancel{font-size:12px;margin-top:10px;padding:6px 16px;border-radius:8px;border:1px solid #ddd;background:#fff;color:#555;cursor:pointer;width:100%}
+.ro-bar{background:#E6F1FB;color:#185FA5;font-size:12px;padding:6px 16px;text-align:center;border-bottom:1px solid #B5D4F4}
+.setup-bar{background:#FFF8E1;color:#854F0B;font-size:12px;padding:8px 16px;border-bottom:1px solid #FAC775;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.setup-link{font-size:11px;padding:4px 12px;border-radius:20px;border:1px solid #854F0B;background:#fff;color:#854F0B;cursor:pointer;white-space:nowrap}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px 16px}
+.sc{background:#f7f7f7;border-radius:8px;padding:10px 12px}
+.sl{font-size:11px;color:#888;margin-bottom:3px}
+.sv{font-size:18px;font-weight:700;color:#111}
+.sv.g{color:#0F6E56}.sv.r{color:#c00}.sv.a{color:#854F0B}
+.nav{display:flex;border-bottom:1px solid #eee;overflow-x:auto;background:#fff;position:sticky;top:57px;z-index:9}
+.nt{font-size:12px;padding:10px 14px;cursor:pointer;color:#888;border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0;font-weight:600}
+.nt.active{color:#111;border-bottom-color:#1D9E75}
+.tc{display:none}.tc.active{display:block}
+.month-pills{display:flex;gap:6px;padding:10px 16px;flex-wrap:wrap;border-bottom:1px solid #eee;background:#fafafa}
+.mp{font-size:11px;padding:4px 12px;border-radius:20px;cursor:pointer;border:1px solid #ddd;color:#666;background:#fff}
+.mp.active{background:#1D9E75;color:#fff;border-color:#1D9E75;font-weight:700}
+.info-bar{padding:6px 16px;font-size:12px;color:#888;background:#fafafa;border-bottom:1px solid #eee}
+.def-bar{display:none;align-items:center;gap:8px;padding:8px 16px;border-bottom:1px solid #eee;font-size:12px;color:#666;flex-wrap:wrap}
+.def-bar input{width:80px;font-size:12px;padding:4px 8px;border:1px solid #ddd;border-radius:6px}
+.def-bar button{font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid #ddd;background:#fff;cursor:pointer}
+.col-hdr{display:grid;padding:6px 16px;font-size:11px;color:#999;border-bottom:1px solid #eee;background:#fafafa;text-transform:uppercase;letter-spacing:0.04em;font-weight:700}
+.row{display:grid;align-items:center;padding:8px 16px;border-bottom:1px solid #f0f0f0;font-size:13px}
+.row:last-child{border-bottom:none}
+.snum{font-size:11px;color:#aaa;text-align:center}
+.nm{font-weight:700;color:#111}
+.badge{font-size:11px;padding:2px 9px;border-radius:20px;white-space:nowrap;font-weight:600}
+.badge.paid{background:#EAF3DE;color:#2d6a0a}
+.badge.unpaid{background:#FCEBEB;color:#a00}
+.badge.click{cursor:pointer}
+.amt-inp{width:78px;font-size:12px;padding:4px 6px;border:1px solid #ddd;border-radius:6px;text-align:right}
+.del-btn{font-size:15px;cursor:pointer;color:#bbb;border:none;background:transparent;padding:2px 4px}
+.del-btn:hover{color:#c00}
+.add-bar{padding:10px 16px;border-bottom:1px solid #eee;display:none;gap:8px;flex-wrap:wrap;align-items:flex-end;background:#fafafa}
+.fg{display:flex;flex-direction:column;gap:3px}
+.fg label{font-size:11px;color:#888;font-weight:600}
+.fg input,.fg select{font-size:13px;padding:6px 8px;border:1px solid #ddd;border-radius:6px;background:#fff}
+.btn-g{font-size:12px;padding:7px 16px;border-radius:8px;border:none;background:#1D9E75;color:#fff;cursor:pointer;font-weight:700}
+.btn-w{font-size:12px;padding:7px 16px;border-radius:8px;border:1px solid #ddd;background:#fff;color:#333;cursor:pointer}
+.search-row{padding:8px 16px;border-bottom:1px solid #eee;display:flex;gap:8px;align-items:center}
+.search-row input{flex:1;font-size:13px;padding:6px 10px;border:1px solid #ddd;border-radius:6px}
+.empty{padding:24px;text-align:center;color:#aaa;font-size:13px}
+.member-ledger{overflow-x:auto}
+.ledger-wrap{padding:16px}
+.ledger-top{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.ledger-top select{font-size:13px;padding:7px 10px;border:1px solid #ddd;border-radius:8px;background:#fff}
+.print-btn{font-size:12px;padding:7px 18px;border-radius:8px;border:none;background:#185FA5;color:#fff;cursor:pointer;font-weight:700}
+.ledger-card{border:1px solid #ddd;border-radius:10px;overflow:hidden}
+.ledger-head{padding:12px 16px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;background:#fafafa}
+.ledger-head h3{font-size:14px;font-weight:700}
+.l-row{display:grid;grid-template-columns:1fr 1fr;padding:9px 16px;border-bottom:1px solid #f0f0f0;font-size:13px}
+.l-row:last-child{border-bottom:none}
+.ll{color:#666}.lv{text-align:right;font-weight:700}
+.lv.g{color:#0F6E56}.lv.r{color:#c00}.lv.a{color:#854F0B}
+.l-sec{padding:6px 16px;font-size:11px;color:#999;text-transform:uppercase;letter-spacing:0.04em;font-weight:700;border-top:1px solid #eee;background:#fafafa}
+.loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,0.85);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:12px}
+.spinner{width:36px;height:36px;border:3px solid #eee;border-top-color:#1D9E75;border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:13px;color:#666}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1D9E75;color:#fff;font-size:13px;padding:8px 20px;border-radius:20px;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap;z-index:100;font-weight:600}
+.toast.show{opacity:1}
+.toast.err{background:#c00}
+/* SETUP MODAL */
+.modal-bg{background:rgba(0,0,0,0.5);padding:1rem;display:none;min-height:300px;align-items:flex-start;justify-content:center;padding-top:2rem}
+.modal-bg.show{display:flex}
+.modal{background:#fff;border-radius:12px;padding:20px;max-width:500px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,0.2)}
+.modal h3{font-size:15px;font-weight:700;margin-bottom:12px;color:#111}
+.modal p{font-size:13px;color:#555;line-height:1.6;margin-bottom:10px}
+.modal ol{font-size:13px;color:#555;line-height:1.8;padding-left:20px;margin-bottom:12px}
+.modal code{background:#f0f0f0;padding:2px 6px;border-radius:4px;font-size:12px;font-family:monospace;word-break:break-all}
+.modal input{width:100%;font-size:13px;padding:8px 10px;border:1px solid #ddd;border-radius:8px;margin:6px 0 12px}
+.modal-btns{display:flex;gap:8px;flex-wrap:wrap}
+@media print{
+  .topbar,.nav,.month-pills,.add-bar,.def-bar,.search-row,.ro-bar,.stats,.setup-bar,.no-print{display:none!important}
+  body{background:#fff;font-size:12px}
+  .app{border:none;max-width:100%}
+  .ledger-card{border:1px solid #999}
+  .ledger-wrap{padding:0}
+  .ledger-top{display:none!important}
+  .tc,.tab-content{display:block!important}
+  #tab-yogdan,#tab-master,#tab-kharcha{display:none!important}
+  #tab-ledger{display:block!important}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- LOADING -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loadingText">Data load ho raha hai...</div>
+  </div>
+
+  <!-- TOPBAR -->
+  <div class="topbar no-print">
+    <div class="topbar-left">
+      <span class="icon">🛕</span>
+      <div>
+        <h1>Mataji Mandir</h1>
+        <small>Contribution Register</small>
+      </div>
+    </div>
+    <div class="top-right">
+      <button class="sync-btn" id="syncBtn" onclick="syncNow()" title="Google Sheet se sync karein">🔄 Sync</button>
+      <button class="admin-btn" id="adminBtn" onclick="toggleAdmin()">🔒 Admin</button>
+    </div>
+  </div>
+
+  <!-- SETUP BAR -->
+  <div class="setup-bar" id="setupBar" style="display:none">
+    ⚠️ Google Sheet abhi connect nahi hai — data browser mein save ho raha hai
+    <button class="setup-link" onclick="showSetupModal()">Setup karein</button>
+  </div>
+
+  <!-- PIN PANEL -->
+  <div class="pin-wrap" id="pinWrap">
+    <div class="pin-box">
+      <h3>🔐 Admin PIN daalein</h3>
+      <div class="pin-dots">
+        <div class="pd" id="d0"></div><div class="pd" id="d1"></div>
+        <div class="pd" id="d2"></div><div class="pd" id="d3"></div>
+      </div>
+      <div class="perr" id="perr"></div>
+      <div class="numpad">
+        <button class="nb" onclick="ep('1')">1</button><button class="nb" onclick="ep('2')">2</button><button class="nb" onclick="ep('3')">3</button>
+        <button class="nb" onclick="ep('4')">4</button><button class="nb" onclick="ep('5')">5</button><button class="nb" onclick="ep('6')">6</button>
+        <button class="nb" onclick="ep('7')">7</button><button class="nb" onclick="ep('8')">8</button><button class="nb" onclick="ep('9')">9</button>
+        <button class="nb" onclick="ep('c')" style="font-size:10px">Mitao</button>
+        <button class="nb" onclick="ep('0')">0</button>
+        <button class="nb" onclick="ep('d')">⌫</button>
+      </div>
+      <div class="pin-hint" id="pinHint" style="display:none"></div>
+      <button class="pin-cancel" onclick="closePinWrap()">Wapas jaao</button>
+    </div>
+  </div>
+
+  <!-- READONLY BAR -->
+  <div class="ro-bar" id="roBar">👁 Sirf dekhne ka mode — edit ke liye Admin login karein</div>
+
+  <!-- SETUP MODAL -->
+  <div class="modal-bg" id="setupModal">
+    <div class="modal">
+      <h3>🔗 Google Sheet Setup</h3>
+      <p>Niche diye steps follow karein — sirf ek baar karna hoga:</p>
+      <ol>
+        <li>Google Sheets mein jaao → <strong>Extensions → Apps Script</strong></li>
+        <li>Saara purana code delete karein</li>
+        <li>Niche diya code paste karein aur Save karein (💾)</li>
+        <li><strong>Deploy → New deployment → Web App</strong></li>
+        <li>"Execute as: Me" aur "Who has access: Anyone" chunein</li>
+        <li>Deploy karein → URL copy karein</li>
+        <li>Woh URL niche paste karein</li>
+      </ol>
+      <p><strong>Apps Script code (copy karein):</strong></p>
+      <div style="background:#f5f5f5;border-radius:6px;padding:10px;font-size:11px;font-family:monospace;margin-bottom:12px;max-height:120px;overflow-y:auto;line-height:1.6;border:1px solid #ddd">
+function doPost(e){<br>
+&nbsp;&nbsp;var ss=SpreadsheetApp.getActiveSpreadsheet();<br>
+&nbsp;&nbsp;var data=JSON.parse(e.postData.contents);<br>
+&nbsp;&nbsp;if(data.action==='save'){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;saveData(ss,data.payload);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;return ok();<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;return ok();<br>
+}<br>
+function doGet(e){<br>
+&nbsp;&nbsp;var ss=SpreadsheetApp.getActiveSpreadsheet();<br>
+&nbsp;&nbsp;var sh=ss.getSheetByName('AppData');<br>
+&nbsp;&nbsp;if(!sh)return ContentService.createTextOutput(JSON.stringify({data:null})).setMimeType(ContentService.MimeType.JSON);<br>
+&nbsp;&nbsp;var val=sh.getRange('A1').getValue();<br>
+&nbsp;&nbsp;return ContentService.createTextOutput(val||'{}').setMimeType(ContentService.MimeType.JSON);<br>
+}<br>
+function saveData(ss,payload){<br>
+&nbsp;&nbsp;var sh=ss.getSheetByName('AppData')||ss.insertSheet('AppData');<br>
+&nbsp;&nbsp;sh.getRange('A1').setValue(JSON.stringify(payload));<br>
+&nbsp;&nbsp;writeReadable(ss,payload);<br>
+}<br>
+function writeReadable(ss,d){<br>
+&nbsp;&nbsp;var sh=ss.getSheetByName('Readable')||ss.insertSheet('Readable');<br>
+&nbsp;&nbsp;sh.clearContents();<br>
+&nbsp;&nbsp;var rows=[['MATAJI MANDIR — READABLE DATA','',''],['','',''],['SADASY LIST','',''],['#','Naam','Default Rs.']];<br>
+&nbsp;&nbsp;(d.masters||[]).forEach(function(m,i){rows.push([i+1,m.name,m.defAmt]);});<br>
+&nbsp;&nbsp;rows.push(['','',''],['MONTHLY DATA','','']);<br>
+&nbsp;&nbsp;Object.keys(d.monthly||{}).sort().forEach(function(mk){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;rows.push(['--- '+mk.replace('_',' ')+' ---','','']);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;rows.push(['#','Naam','Status','Amount']);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(d.monthly[mk]||[]).forEach(function(c,i){rows.push([i+1,c.name,c.status,c.amount]);});<br>
+&nbsp;&nbsp;&nbsp;&nbsp;rows.push(['','','','']);<br>
+&nbsp;&nbsp;});<br>
+&nbsp;&nbsp;rows.push(['KHARCHA','','','']);<br>
+&nbsp;&nbsp;rows.push(['Vivran','Tarikh','Amount','Month']);<br>
+&nbsp;&nbsp;(d.expenses||[]).forEach(function(e){rows.push([e.name,e.date,e.amount,e.month]);});<br>
+&nbsp;&nbsp;sh.getRange(1,1,rows.length,4).setValues(rows);<br>
+}<br>
+function ok(){return ContentService.createTextOutput(JSON.stringify({status:'ok'})).setMimeType(ContentService.MimeType.JSON);}
+      </div>
+      <label style="font-size:12px;color:#666;font-weight:700">Aapka Web App URL:</label>
+      <input type="text" id="scriptUrl" placeholder="https://script.google.com/macros/s/.../exec"/>
+      <div class="modal-btns">
+        <button class="btn-g" onclick="saveScriptUrl()">Save karein</button>
+        <button class="btn-w" onclick="closeSetupModal()">Baad mein</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats no-print">
+    <div class="sc"><div class="sl">Is maah prapt yogdan</div><div class="sv g" id="sPaid">₹0</div></div>
+    <div class="sc"><div class="sl">Is maah kharcha</div><div class="sv a" id="sExp">₹0</div></div>
+    <div class="sc"><div class="sl">Purani bachat</div><div class="sv" id="sCarry">₹0</div></div>
+    <div class="sc"><div class="sl">Kul balance</div><div class="sv g" id="sBal">₹0</div></div>
+  </div>
+
+  <!-- NAV -->
+  <div class="nav no-print">
+    <div class="nt active" onclick="showTab('yogdan')">Yogdan</div>
+    <div class="nt admin-only-tab" onclick="showTab('master')" style="display:none">Sadasy List</div>
+    <div class="nt" onclick="showTab('kharcha')">Kharcha</div>
+    <div class="nt" onclick="showTab('ledger')">Ledger / Print</div>
+  </div>
+
+  <!-- YOGDAN TAB -->
+  <div id="tab-yogdan" class="tc active">
+    <div class="month-pills" id="monthPills"></div>
+    <div class="info-bar" id="yogInfo"></div>
+    <div class="def-bar" id="defBar">
+      <span>Sabhi ka yogdan: ₹</span>
+      <input type="number" id="defAmt" value="100" min="50" max="100000"/>
+      <button onclick="applyDefAmt()">Sabhi pe lagao</button>
+    </div>
+    <div class="col-hdr" id="yogHdr" style="grid-template-columns:24px 1fr 85px 75px;gap:6px">
+      <span>#</span><span>Naam</span><span style="text-align:right">Yogdan</span><span>Status</span>
+    </div>
+    <div id="yogdanList"></div>
+  </div>
+
+  <!-- MASTER TAB -->
+  <div id="tab-master" class="tc">
+    <div class="add-bar" id="addMasterBar">
+      <div class="fg"><label>Sadasy ka naam</label><input type="text" id="mName" placeholder="Naam likhein" style="width:160px"/></div>
+      <div class="fg"><label>Default ₹</label><input type="number" id="mAmt" value="100" min="50" max="100000" style="width:80px"/></div>
+      <button class="btn-g" onclick="addMaster()">Jodein</button>
+    </div>
+    <div class="search-row">
+      <input type="text" id="mSearch" placeholder="Naam se dhundein..." oninput="renderMaster()"/>
+      <span id="mCnt" style="font-size:11px;color:#aaa;white-space:nowrap"></span>
+    </div>
+    <div class="col-hdr" id="mHdr" style="gap:6px"></div>
+    <div id="masterList"></div>
+  </div>
+
+  <!-- KHARCHA TAB -->
+  <div id="tab-kharcha" class="tc">
+    <div class="add-bar" id="addKharBar">
+      <div class="fg"><label>Vivran</label><input type="text" id="kName" placeholder="Jaise: Prasad, Diya" style="width:150px"/></div>
+      <div class="fg"><label>₹</label><input type="number" id="kAmt" min="1" max="100000" style="width:80px"/></div>
+      <div class="fg"><label>Tarikh</label><input type="date" id="kDate"/></div>
+      <button class="btn-g" onclick="addKharcha()">Darj karein</button>
+    </div>
+    <div class="col-hdr" id="kHdr" style="gap:6px"></div>
+    <div id="kharchaList"></div>
+  </div>
+
+  <!-- LEDGER TAB -->
+  <div id="tab-ledger" class="tc">
+    <div class="ledger-wrap">
+      <div class="ledger-top no-print">
+        <span style="font-size:13px;color:#666">Mahina chunein:</span>
+        <select id="ledSel" onchange="renderLedger()"></select>
+        <button class="print-btn" onclick="printLedger()">🖨 Print / PDF</button>
+      </div>
+      <div id="ledgerContent"></div>
+    </div>
+  </div>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// CONFIG — Yahan apna PIN badlein
+// ============================================================
+const PIN = '1108';
+
+// ============================================================
+// STATE
+// ============================================================
+let pe = '', isAdmin = false;
+let masters = [];
+let monthly = {};
+let expenses = [];
+let selMonth = '';
+let scriptURL = localStorage.getItem('mandir_script_url') || '';
+let saveTimer = null;
+
+const MN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+function mk(m,y){return m+'_'+y}
+function mkL(k){const[m,y]=k.split('_');return m+' '+y}
+function curMK(){const d=new Date();return mk(MN[d.getMonth()],d.getFullYear())}
+
+// ============================================================
+// INIT — load from Google Sheet or localStorage
+// ============================================================
+async function init() {
+  showLoading('Data load ho raha hai...');
+  document.getElementById('kDate').valueAsDate = new Date();
+
+  if (scriptURL) {
+    try {
+      const res = await fetch(scriptURL, {method:'GET'});
+      const text = await res.text();
+      const json = JSON.parse(text);
+      if (json && json.masters) {
+        masters = json.masters || [];
+        monthly = json.monthly || {};
+        expenses = json.expenses || [];
+        selMonth = json.selMonth || '';
+        hideLoading();
+        autoRollover();
+        renderAll();
+        populateLedSel();
+        showToast('Data load ho gaya! ✓');
+        return;
+      }
+    } catch(e) {
+      console.log('Sheet load failed, using localStorage');
+    }
+  }
+
+  // Fallback: localStorage
+  const saved = localStorage.getItem('mandir_data');
+  if (saved) {
+    try {
+      const d = JSON.parse(saved);
+      masters = d.masters || [];
+      monthly = d.monthly || {};
+      expenses = d.expenses || [];
+      selMonth = d.selMonth || '';
+    } catch(e){}
+  }
+
+  if (masters.length === 0) loadSampleData();
+  hideLoading();
+  autoRollover();
+  renderAll();
+  populateLedSel();
+
+  if (!scriptURL) {
+    document.getElementById('setupBar').style.display = 'flex';
+  }
+}
+
+function loadSampleData() {
+  const names = ['Ramesh Sharma','Suresh Gupta','Priya Verma','Anil Patel','Sunita Joshi'];
+  names.forEach((n,i) => masters.push({id:i+1,name:n,defAmt:100,active:true}));
+  const apr = mk('April','2026');
+  generateMonth(apr);
+  monthly[apr][0].status = 'paid';
+  monthly[apr][1].status = 'paid';
+  expenses.push({id:1,name:'Prasad aur phool',date:'2026-04-05',amount:450,month:apr});
+  expenses.push({id:2,name:'Diya aur agarbatti',date:'2026-04-10',amount:220,month:apr});
+}
+
+// ============================================================
+// SAVE — debounced, saves to both localStorage + Google Sheet
+// ============================================================
+function scheduleSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => saveData(), 800);
+}
+
+async function saveData() {
+  const payload = {masters, monthly, expenses, selMonth};
+  // Always save to localStorage as backup
+  localStorage.setItem('mandir_data', JSON.stringify(payload));
+
+  if (!scriptURL) return;
+
+  const btn = document.getElementById('syncBtn');
+  btn.textContent = '💾 Saving...';
+  btn.classList.add('saving');
+
+  try {
+    await fetch(scriptURL, {
+      method: 'POST',
+      body: JSON.stringify({action:'save', payload}),
+    });
+    btn.textContent = '✓ Saved';
+    setTimeout(() => {
+      btn.textContent = '🔄 Sync';
+      btn.classList.remove('saving');
+    }, 2000);
+  } catch(e) {
+    btn.textContent = '🔄 Sync';
+    btn.classList.remove('saving');
+    showToast('Sheet save nahi hua — data local mein save hai', true);
+  }
+}
+
+async function syncNow() {
+  if (!scriptURL) { showSetupModal(); return; }
+  showLoading('Sync ho raha hai...');
+  try {
+    const res = await fetch(scriptURL);
+    const text = await res.text();
+    const json = JSON.parse(text);
+    if (json && json.masters) {
+      masters = json.masters || [];
+      monthly = json.monthly || {};
+      expenses = json.expenses || [];
+      selMonth = json.selMonth || selMonth;
+      hideLoading();
+      autoRollover(); renderAll(); populateLedSel();
+      showToast('Sync ho gaya! ✓');
+    } else {
+      hideLoading(); showToast('Sheet mein data nahi mila');
+    }
+  } catch(e) {
+    hideLoading(); showToast('Sync nahi hua — internet check karein', true);
+  }
+}
+
+// ============================================================
+// AUTO ROLLOVER
+// ============================================================
+function autoRollover() {
+  const cmk = curMK();
+  if (!monthly[cmk]) { generateMonth(cmk); }
+  if (!selMonth || !monthly[selMonth]) selMonth = cmk;
+}
+
+function generateMonth(mk_) {
+  if (monthly[mk_]) return;
+  monthly[mk_] = masters.filter(m => m.active).map(m => ({
+    id: Date.now() + Math.random(), masterId: m.id,
+    name: m.name, amount: m.defAmt, status: 'unpaid'
+  }));
+}
+
+// ============================================================
+// RENDER ALL
+// ============================================================
+function renderAll() {
+  renderMonthPills(); renderYogdan(); renderMaster(); renderKharcha(); updateStats();
+}
+
+function renderMonthPills() {
+  const keys = Object.keys(monthly).sort();
+  document.getElementById('monthPills').innerHTML = keys.map(k =>
+    `<button class="mp${k===selMonth?' active':''}" onclick="selMon('${k}')">${mkL(k)}</button>`
+  ).join('');
+}
+function selMon(k){selMonth=k;renderYogdan();updateStats();}
+
+// ============================================================
+// YOGDAN
+// ============================================================
+function renderYogdan() {
+  const data = monthly[selMonth] || [];
+  const paid = data.filter(c => c.status==='paid').length;
+  document.getElementById('yogInfo').textContent = mkL(selMonth) + ' — ' + paid + '/' + data.length + ' ne yogdan diya';
+  const hdr = document.getElementById('yogHdr');
+  if (isAdmin) {
+    hdr.style.gridTemplateColumns = '24px 1fr 90px 80px 30px';
+    hdr.innerHTML = '<span>#</span><span>Naam</span><span style="text-align:right">Yogdan (₹)</span><span>Status</span><span></span>';
+  } else {
+    hdr.style.gridTemplateColumns = '24px 1fr 90px 80px';
+    hdr.innerHTML = '<span>#</span><span>Naam</span><span style="text-align:right">Yogdan (₹)</span><span>Status</span>';
+  }
+  const list = document.getElementById('yogdanList');
+  if (!data.length) { list.innerHTML = '<div class="empty">Koi sadasy nahi</div>'; return; }
+  if (isAdmin) {
+    list.innerHTML = data.map((c,i) => `
+      <div class="row" style="grid-template-columns:24px 1fr 90px 80px 30px;gap:6px">
+        <span class="snum">${i+1}</span>
+        <div class="nm">${c.name}</div>
+        <div style="text-align:right"><input class="amt-inp" type="number" value="${c.amount}" min="50" max="100000" onchange="updAmt('${c.id}',this.value)"/></div>
+        <div><span class="badge click ${c.status}" onclick="togStatus('${c.id}')">${c.status==='paid'?'Diya ✓':'Baaki'}</span></div>
+        <button class="del-btn" onclick="delC('${c.id}')">×</button>
+      </div>`).join('');
+  } else {
+    list.innerHTML = data.map((c,i) => `
+      <div class="row" style="grid-template-columns:24px 1fr 90px 80px;gap:6px">
+        <span class="snum">${i+1}</span>
+        <div class="nm">${c.name}</div>
+        <div style="text-align:right;color:#111">₹${c.amount.toLocaleString()}</div>
+        <div><span class="badge ${c.status}">${c.status==='paid'?'Diya ✓':'Baaki'}</span></div>
+      </div>`).join('');
+  }
+}
+
+function updAmt(id,v) {
+  const c = (monthly[selMonth]||[]).find(x=>x.id==id);
+  if(c){c.amount=Math.max(50,Math.min(100000,parseInt(v)||100));updateStats();scheduleSave();}
+}
+function applyDefAmt() {
+  const amt = Math.max(50,Math.min(100000,parseInt(document.getElementById('defAmt').value)||100));
+  (monthly[selMonth]||[]).forEach(c=>c.amount=amt);
+  renderYogdan();updateStats();scheduleSave();showToast('Sabhi ka ₹'+amt+' set ho gaya!');
+}
+function togStatus(id) {
+  if(!isAdmin){showToast('Sirf admin badal sakta hai');return;}
+  const c=(monthly[selMonth]||[]).find(x=>x.id==id);
+  if(c){c.status=c.status==='paid'?'unpaid':'paid';renderYogdan();updateStats();scheduleSave();}
+}
+function delC(id) {
+  if(!isAdmin)return;
+  if(monthly[selMonth])monthly[selMonth]=monthly[selMonth].filter(c=>c.id!=id);
+  renderYogdan();updateStats();scheduleSave();
+}
+
+// ============================================================
+// MASTER
+// ============================================================
+function renderMaster() {
+  const s = document.getElementById('mSearch').value.toLowerCase();
+  const fl = masters.filter(m=>m.name.toLowerCase().includes(s));
+  document.getElementById('mCnt').textContent = masters.filter(m=>m.active).length+'/60';
+  const hdr = document.getElementById('mHdr');
+  if(isAdmin){
+    hdr.style.gridTemplateColumns='24px 1fr 100px 60px 30px';
+    hdr.innerHTML='<span>#</span><span>Naam</span><span style="text-align:center">Default ₹</span><span>Status</span><span></span>';
+  } else {
+    hdr.style.gridTemplateColumns='24px 1fr 100px 60px';
+    hdr.innerHTML='<span>#</span><span>Naam</span><span style="text-align:center">Default ₹</span><span>Status</span>';
+  }
+  if(!fl.length){document.getElementById('masterList').innerHTML='<div class="empty">Koi sadasy nahi</div>';return;}
+  if(isAdmin){
+    document.getElementById('masterList').innerHTML=fl.map((m,i)=>`
+      <div class="row" style="grid-template-columns:24px 1fr 100px 60px 30px;gap:6px">
+        <span class="snum">${i+1}</span>
+        <div class="nm">${m.name}</div>
+        <div style="text-align:center"><input class="amt-inp" type="number" value="${m.defAmt}" min="50" max="100000" style="width:72px" onchange="updMasterAmt(${m.id},this.value)"/></div>
+        <div><span class="badge paid">Active</span></div>
+        <button class="del-btn" onclick="delMaster(${m.id})">×</button>
+      </div>`).join('');
+  } else {
+    document.getElementById('masterList').innerHTML=fl.map((m,i)=>`
+      <div class="row" style="grid-template-columns:24px 1fr 100px 60px;gap:6px">
+        <span class="snum">${i+1}</span>
+        <div class="nm">${m.name}</div>
+        <div style="text-align:center;color:#888">₹${m.defAmt.toLocaleString()}</div>
+        <div><span class="badge paid">Active</span></div>
+      </div>`).join('');
+  }
+}
+function addMaster() {
+  if(!isAdmin)return;
+  const name=document.getElementById('mName').value.trim();
+  const amt=Math.max(50,Math.min(100000,parseInt(document.getElementById('mAmt').value)||100));
+  if(!name){showToast('Naam daalein!');return;}
+  if(masters.filter(m=>m.active).length>=60){showToast('60 sadasy ki limit!');return;}
+  const mem={id:Date.now(),name,defAmt:amt,active:true};
+  masters.push(mem);
+  Object.keys(monthly).forEach(mk_=>{
+    monthly[mk_].push({id:Date.now()+Math.random(),masterId:mem.id,name,amount:amt,status:'unpaid'});
+  });
+  document.getElementById('mName').value='';
+  renderAll();scheduleSave();showToast(name+' add ho gaya!');
+}
+function updMasterAmt(id,v){
+  const m=masters.find(x=>x.id===id);
+  if(m){m.defAmt=Math.max(50,Math.min(100000,parseInt(v)||100));scheduleSave();}
+}
+function delMaster(id){
+  if(!isAdmin)return;
+  masters=masters.filter(m=>m.id!==id);
+  Object.keys(monthly).forEach(mk_=>{monthly[mk_]=monthly[mk_].filter(c=>c.masterId!==id);});
+  renderAll();scheduleSave();showToast('Sadasy hataya gaya');
+}
+
+// ============================================================
+// KHARCHA
+// ============================================================
+function renderKharcha() {
+  const hdr=document.getElementById('kHdr');
+  if(isAdmin){hdr.style.gridTemplateColumns='1fr 95px 70px 30px';hdr.innerHTML='<span>Vivran</span><span>Tarikh</span><span style="text-align:right">₹</span><span></span>';}
+  else{hdr.style.gridTemplateColumns='1fr 95px 70px';hdr.innerHTML='<span>Vivran</span><span>Tarikh</span><span style="text-align:right">₹</span>';}
+  const list=document.getElementById('kharchaList');
+  if(!expenses.length){list.innerHTML='<div class="empty">Koi kharcha nahi darj</div>';return;}
+  if(isAdmin){
+    list.innerHTML=expenses.map(e=>`
+      <div class="row" style="grid-template-columns:1fr 95px 70px 30px;gap:6px">
+        <div class="nm">${e.name} <span style="font-size:11px;color:#aaa;font-weight:400">(${e.month?mkL(e.month):''})</span></div>
+        <div style="font-size:12px;color:#888">${e.date}</div>
+        <div style="text-align:right">₹${e.amount.toLocaleString()}</div>
+        <button class="del-btn" onclick="delK(${e.id})">×</button>
+      </div>`).join('');
+  } else {
+    list.innerHTML=expenses.map(e=>`
+      <div class="row" style="grid-template-columns:1fr 95px 70px;gap:6px">
+        <div class="nm">${e.name}</div>
+        <div style="font-size:12px;color:#888">${e.date}</div>
+        <div style="text-align:right">₹${e.amount.toLocaleString()}</div>
+      </div>`).join('');
+  }
+}
+function addKharcha(){
+  if(!isAdmin)return;
+  const name=document.getElementById('kName').value.trim();
+  const amt=Math.max(1,Math.min(100000,parseInt(document.getElementById('kAmt').value)||0));
+  const date=document.getElementById('kDate').value;
+  if(!name||!amt||!date){showToast('Sabhi jaankari bharein!');return;}
+  expenses.push({id:Date.now(),name,amount:amt,date,month:selMonth});
+  document.getElementById('kName').value='';document.getElementById('kAmt').value='';
+  renderKharcha();updateStats();renderLedger();scheduleSave();showToast('Kharcha darj ho gaya!');
+}
+function delK(id){
+  if(!isAdmin)return;
+  expenses=expenses.filter(e=>e.id!==id);renderKharcha();updateStats();renderLedger();scheduleSave();
+}
+
+// ============================================================
+// STATS + CARRY FORWARD
+// ============================================================
+function getCarry(mk_){
+  const keys=Object.keys(monthly).sort();
+  const idx=keys.indexOf(mk_);if(idx<=0)return 0;
+  let carry=0;
+  for(let i=0;i<idx;i++){
+    const k=keys[i];
+    const p=(monthly[k]||[]).filter(c=>c.status==='paid').reduce((s,c)=>s+c.amount,0);
+    const e=expenses.filter(x=>x.month===k).reduce((s,x)=>s+x.amount,0);
+    carry+=p-e;
+  }
+  return carry;
+}
+function updateStats(){
+  const data=monthly[selMonth]||[];
+  const paid=data.filter(c=>c.status==='paid').reduce((s,c)=>s+c.amount,0);
+  const exp=expenses.filter(e=>e.month===selMonth).reduce((s,e)=>s+e.amount,0);
+  const carry=getCarry(selMonth);
+  const bal=carry+paid-exp;
+  document.getElementById('sPaid').textContent='₹'+paid.toLocaleString();
+  document.getElementById('sExp').textContent='₹'+exp.toLocaleString();
+  document.getElementById('sCarry').textContent='₹'+carry.toLocaleString();
+  const be=document.getElementById('sBal');
+  be.textContent='₹'+Math.abs(bal).toLocaleString()+(bal<0?' (kami)':'');
+  be.className='sv '+(bal>=0?'g':'r');
+}
+
+// ============================================================
+// LEDGER
+// ============================================================
+function populateLedSel(){
+  const sel=document.getElementById('ledSel');
+  const cur=sel.value;
+  const keys=Object.keys(monthly).sort();
+  sel.innerHTML=keys.map(k=>`<option value="${k}">${mkL(k)}</option>`).join('');
+  if(cur&&keys.includes(cur))sel.value=cur;
+  else if(keys.length)sel.value=keys[keys.length-1];
+  renderLedger();
+}
+function renderLedger(){
+  const sel=document.getElementById('ledSel');if(!sel)return;
+  const mk_=sel.value;if(!mk_||!monthly[mk_])return;
+  const data=monthly[mk_]||[];
+  const paid=data.filter(c=>c.status==='paid');
+  const unpaid=data.filter(c=>c.status==='unpaid');
+  const totalPaid=paid.reduce((s,c)=>s+c.amount,0);
+  const kList=expenses.filter(e=>e.month===mk_);
+  const totalExp=kList.reduce((s,e)=>s+e.amount,0);
+  const carry=getCarry(mk_);
+  const bachat=carry+totalPaid-totalExp;
+  document.getElementById('ledgerContent').innerHTML=`
+    <div class="ledger-card">
+      <div class="ledger-head"><h3>Mataji Mandir — ${mkL(mk_)}</h3><span style="font-size:11px;color:#999">${data.length} sadasy</span></div>
+      <div class="l-row"><span class="ll">Purani bachat (carry forward)</span><span class="lv">${carry>=0?'':'− '}₹${Math.abs(carry).toLocaleString()}</span></div>
+      <div class="l-row"><span class="ll">Is maah prapt yogdan</span><span class="lv g">+ ₹${totalPaid.toLocaleString()}</span></div>
+      <div class="l-row"><span class="ll">Is maah kul kharcha</span><span class="lv a">− ₹${totalExp.toLocaleString()}</span></div>
+      <div class="l-row" style="border-top:2px solid #ddd"><span class="ll" style="font-weight:700">Kul bachat (balance)</span><span class="lv ${bachat>=0?'g':'r'}" style="font-size:16px">${bachat>=0?'':'− '}₹${Math.abs(bachat).toLocaleString()}</span></div>
+      ${kList.length?`<div class="l-sec">Kharcha vivran</div>${kList.map(e=>`<div class="l-row"><span class="ll">${e.name} <span style="color:#bbb;font-size:11px">(${e.date})</span></span><span class="lv a">₹${e.amount.toLocaleString()}</span></div>`).join('')}`:''}
+      <div class="l-sec">Yogdan — ${paid.length} diya, ${unpaid.length} baaki</div>
+      <div class="member-ledger">
+        <div style="display:grid;grid-template-columns:28px 1fr 80px 70px;gap:6px;padding:6px 16px;font-size:11px;color:#999;border-bottom:1px solid #eee;background:#fafafa;text-transform:uppercase;letter-spacing:0.04em;font-weight:700">
+          <span>#</span><span>Naam</span><span style="text-align:right">₹</span><span>Status</span>
+        </div>
+        ${data.map((c,i)=>`
+          <div style="display:grid;grid-template-columns:28px 1fr 80px 70px;gap:6px;padding:7px 16px;border-bottom:1px solid #f0f0f0;font-size:12px;align-items:center">
+            <span style="font-size:11px;color:#aaa;text-align:center">${i+1}</span>
+            <span style="font-weight:700;color:#111">${c.name}</span>
+            <span style="text-align:right;color:#555">₹${c.amount.toLocaleString()}</span>
+            <span class="badge ${c.status}" style="font-size:10px">${c.status==='paid'?'Diya ✓':'Baaki'}</span>
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
+function printLedger(){
+  const mk_=document.getElementById('ledSel').value;
+  const content=document.getElementById('ledgerContent').innerHTML;
+  const w=window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Mataji Mandir — ${mkL(mk_)}</title>
+  <style>*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}body{padding:20px;color:#111;font-size:13px}.ledger-card{border:1px solid #ccc;border-radius:8px;overflow:hidden;max-width:580px;margin:0 auto}.ledger-head{padding:12px 16px;border-bottom:1px solid #ccc;display:flex;justify-content:space-between;align-items:center;background:#f9f9f9}.ledger-head h3{font-size:15px;font-weight:700}.l-row{display:grid;grid-template-columns:1fr 1fr;padding:8px 16px;border-bottom:1px solid #eee;font-size:13px}.ll{color:#555}.lv{text-align:right;font-weight:700}.lv.g{color:#0F6E56}.lv.r{color:#c00}.lv.a{color:#854F0B}.l-sec{padding:6px 16px;font-size:11px;color:#999;text-transform:uppercase;letter-spacing:0.04em;font-weight:700;border-top:1px solid #eee;background:#fafafa}.badge{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700}.badge.paid{background:#EAF3DE;color:#2d6a0a}.badge.unpaid{background:#FCEBEB;color:#a00}.footer{text-align:center;font-size:11px;color:#aaa;margin-top:16px}</style>
+  </head><body>${content}<p class="footer">Mataji Mandir — ${mkL(mk_)} — Print: ${new Date().toLocaleDateString('hi-IN')}</p></body></html>`);
+  w.document.close();setTimeout(()=>w.print(),400);
+}
+
+// ============================================================
+// SETUP MODAL
+// ============================================================
+function showSetupModal(){document.getElementById('setupModal').classList.add('show');}
+function closeSetupModal(){document.getElementById('setupModal').classList.remove('show');}
+function saveScriptUrl(){
+  const url=document.getElementById('scriptUrl').value.trim();
+  if(!url||!url.includes('script.google.com')){showToast('Sahi URL daalein!',true);return;}
+  scriptURL=url;
+  localStorage.setItem('mandir_script_url',url);
+  document.getElementById('setupBar').style.display='none';
+  closeSetupModal();
+  showToast('URL save ho gaya! Sync ho raha hai...');
+  setTimeout(()=>syncNow(),500);
+}
+
+// ============================================================
+// PIN
+// ============================================================
+function toggleAdmin(){
+  if(isAdmin){
+    isAdmin=false;
+    document.getElementById('adminBtn').className='admin-btn';
+    document.getElementById('adminBtn').textContent='🔒 Admin';
+    document.getElementById('roBar').style.display='block';
+    applyRoleUI();showToast('Viewer mode');return;
+  }
+  const pw=document.getElementById('pinWrap');
+  pw.style.display=pw.style.display==='none'?'block':'none';
+  pe='';for(let i=0;i<4;i++)document.getElementById('d'+i).classList.remove('f');
+  document.getElementById('perr').textContent='';
+}
+function closePinWrap(){document.getElementById('pinWrap').style.display='none';pe='';}
+function ep(v){
+  const err=document.getElementById('perr');err.textContent='';
+  if(v==='c')pe='';else if(v==='d')pe=pe.slice(0,-1);
+  else if(pe.length<4)pe+=v;
+  for(let i=0;i<4;i++)document.getElementById('d'+i).classList.toggle('f',i<pe.length);
+  if(pe.length===4){
+    if(pe===PIN){
+      isAdmin=true;
+      document.getElementById('pinWrap').style.display='none';
+      document.getElementById('adminBtn').className='admin-btn on';
+      document.getElementById('adminBtn').textContent='🔓 Admin';
+      document.getElementById('roBar').style.display='none';
+      applyRoleUI();showToast('Admin mode ON');
+    } else {
+      err.textContent='Galat PIN, dobara try karein';
+      pe='';for(let i=0;i<4;i++)document.getElementById('d'+i).classList.remove('f');
+    }
+  }
+}
+function applyRoleUI(){
+  document.getElementById('addMasterBar').style.display=isAdmin?'flex':'none';
+  document.getElementById('addKharBar').style.display=isAdmin?'flex':'none';
+  document.getElementById('defBar').style.display=isAdmin?'flex':'none';
+  // Sadasy tab — sirf admin ko dikhe
+  document.querySelectorAll('.admin-only-tab').forEach(el=>el.style.display=isAdmin?'':'none');
+  // Agar viewer master tab pe hai toh yogdan pe bhejo
+  if(!isAdmin){
+    const masterActive=document.getElementById('tab-master').classList.contains('active');
+    if(masterActive) showTab('yogdan');
+  }
+  renderAll();
+}
+
+// ============================================================
+// TAB
+// ============================================================
+function showTab(t){
+  const ids=['yogdan','master','kharcha','ledger'];
+  document.querySelectorAll('.nt').forEach((n,i)=>n.classList.toggle('active',ids[i]===t));
+  document.querySelectorAll('.tc').forEach(tc=>tc.classList.toggle('active',tc.id==='tab-'+t));
+  if(t==='ledger')renderLedger();
+}
+
+// ============================================================
+// LOADING + TOAST
+// ============================================================
+function showLoading(msg){
+  document.getElementById('loadingText').textContent=msg||'Loading...';
+  document.getElementById('loadingOverlay').style.display='flex';
+}
+function hideLoading(){document.getElementById('loadingOverlay').style.display='none';}
+function showToast(msg,err){
+  const t=document.getElementById('toast');t.textContent=msg;
+  t.className='toast'+(err?' err':'')+' show';
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+window.onload=init;
+</script>
+</body>
+</html>
