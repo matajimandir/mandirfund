@@ -31,8 +31,8 @@ body{font-family:Arial,sans-serif;background:#f5f5f5;color:#111;font-size:14px}
 .pin-hint{font-size:11px;color:#999;margin-top:8px}
 .pin-cancel{font-size:12px;margin-top:10px;padding:6px 16px;border-radius:8px;border:1px solid #ddd;background:#fff;color:#555;cursor:pointer;width:100%}
 .ro-bar{background:#E6F1FB;color:#185FA5;font-size:12px;padding:6px 16px;text-align:center;border-bottom:1px solid #B5D4F4}
-.setup-bar{background:#FFF8E1;color:#854F0B;font-size:12px;padding:8px 16px;border-bottom:1px solid #FAC775;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
-.setup-link{font-size:11px;padding:4px 12px;border-radius:20px;border:1px solid #854F0B;background:#fff;color:#854F0B;cursor:pointer;white-space:nowrap}
+
+
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px 16px}
 .sc{background:#f7f7f7;border-radius:8px;padding:10px 12px}
 .sl{font-size:11px;color:#888;margin-bottom:3px}
@@ -90,18 +90,18 @@ body{font-family:Arial,sans-serif;background:#f5f5f5;color:#111;font-size:14px}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1D9E75;color:#fff;font-size:13px;padding:8px 20px;border-radius:20px;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap;z-index:100;font-weight:600}
 .toast.show{opacity:1}
 .toast.err{background:#c00}
-/* SETUP MODAL */
-.modal-bg{background:rgba(0,0,0,0.5);padding:1rem;display:none;min-height:300px;align-items:flex-start;justify-content:center;padding-top:2rem}
-.modal-bg.show{display:flex}
-.modal{background:#fff;border-radius:12px;padding:20px;max-width:500px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,0.2)}
-.modal h3{font-size:15px;font-weight:700;margin-bottom:12px;color:#111}
-.modal p{font-size:13px;color:#555;line-height:1.6;margin-bottom:10px}
-.modal ol{font-size:13px;color:#555;line-height:1.8;padding-left:20px;margin-bottom:12px}
-.modal code{background:#f0f0f0;padding:2px 6px;border-radius:4px;font-size:12px;font-family:monospace;word-break:break-all}
-.modal input{width:100%;font-size:13px;padding:8px 10px;border:1px solid #ddd;border-radius:8px;margin:6px 0 12px}
-.modal-btns{display:flex;gap:8px;flex-wrap:wrap}
+
+
+
+
+
+
+
+
+
+
 @media print{
-  .topbar,.nav,.month-pills,.add-bar,.def-bar,.search-row,.ro-bar,.stats,.setup-bar,.no-print{display:none!important}
+  .topbar,.nav,.month-pills,.add-bar,.def-bar,.search-row,.ro-bar,.stats,.no-print{display:none!important}
   body{background:#fff;font-size:12px}
   .app{border:none;max-width:100%}
   .ledger-card{border:1px solid #999}
@@ -136,14 +136,7 @@ body{font-family:Arial,sans-serif;background:#f5f5f5;color:#111;font-size:14px}
       <button class="admin-btn" id="adminBtn" onclick="toggleAdmin()">🔒 Admin</button>
     </div>
   </div>
-
-  <!-- SETUP BAR -->
-  <div class="setup-bar" id="setupBar" style="display:none">
-    ⚠️ Google Sheet abhi connect nahi hai — data browser mein save ho raha hai
-    <button class="setup-link" onclick="showSetupModal()">Setup karein</button>
-  </div>
-
-  <!-- PIN PANEL -->
+<!-- PIN PANEL -->
   <div class="pin-wrap" id="pinWrap">
     <div class="pin-box">
       <h3>🔐 Admin PIN daalein</h3>
@@ -167,72 +160,6 @@ body{font-family:Arial,sans-serif;background:#f5f5f5;color:#111;font-size:14px}
 
   <!-- READONLY BAR -->
   <div class="ro-bar" id="roBar">👁 Sirf dekhne ka mode — edit ke liye Admin login karein</div>
-
-  <!-- SETUP MODAL -->
-  <div class="modal-bg" id="setupModal">
-    <div class="modal">
-      <h3>🔗 Google Sheet Setup</h3>
-      <p>Niche diye steps follow karein — sirf ek baar karna hoga:</p>
-      <ol>
-        <li>Google Sheets mein jaao → <strong>Extensions → Apps Script</strong></li>
-        <li>Saara purana code delete karein</li>
-        <li>Niche diya code paste karein aur Save karein (💾)</li>
-        <li><strong>Deploy → New deployment → Web App</strong></li>
-        <li>"Execute as: Me" aur "Who has access: Anyone" chunein</li>
-        <li>Deploy karein → URL copy karein</li>
-        <li>Woh URL niche paste karein</li>
-      </ol>
-      <p><strong>Step 7 ke baad — HTML file mein URL save karein:</strong></p>
-      <p style="font-size:12px;color:#c00;background:#fff8e1;padding:8px;border-radius:6px;border:1px solid #fac775">Sabhi devices pe kaam karne ke liye: HTML file Notepad mein kholo → <code>YAHAN_APNA_URL_DAALO</code> dhundein → wahan apna URL paste karein → file save karein → GitHub pe dobara upload karein</p>
-      <p><strong>Apps Script code (copy karein):</strong></p>
-      <div style="background:#f5f5f5;border-radius:6px;padding:10px;font-size:11px;font-family:monospace;margin-bottom:12px;max-height:120px;overflow-y:auto;line-height:1.6;border:1px solid #ddd">
-function doPost(e){<br>
-&nbsp;&nbsp;var ss=SpreadsheetApp.getActiveSpreadsheet();<br>
-&nbsp;&nbsp;var data=JSON.parse(e.postData.contents);<br>
-&nbsp;&nbsp;if(data.action==='save'){<br>
-&nbsp;&nbsp;&nbsp;&nbsp;saveData(ss,data.payload);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;return ok();<br>
-&nbsp;&nbsp;}<br>
-&nbsp;&nbsp;return ok();<br>
-}<br>
-function doGet(e){<br>
-&nbsp;&nbsp;var ss=SpreadsheetApp.getActiveSpreadsheet();<br>
-&nbsp;&nbsp;var sh=ss.getSheetByName('AppData');<br>
-&nbsp;&nbsp;if(!sh)return ContentService.createTextOutput(JSON.stringify({data:null})).setMimeType(ContentService.MimeType.JSON);<br>
-&nbsp;&nbsp;var val=sh.getRange('A1').getValue();<br>
-&nbsp;&nbsp;return ContentService.createTextOutput(val||'{}').setMimeType(ContentService.MimeType.JSON);<br>
-}<br>
-function saveData(ss,payload){<br>
-&nbsp;&nbsp;var sh=ss.getSheetByName('AppData')||ss.insertSheet('AppData');<br>
-&nbsp;&nbsp;sh.getRange('A1').setValue(JSON.stringify(payload));<br>
-&nbsp;&nbsp;writeReadable(ss,payload);<br>
-}<br>
-function writeReadable(ss,d){<br>
-&nbsp;&nbsp;var sh=ss.getSheetByName('Readable')||ss.insertSheet('Readable');<br>
-&nbsp;&nbsp;sh.clearContents();<br>
-&nbsp;&nbsp;var rows=[['MATAJI MANDIR — READABLE DATA','',''],['','',''],['SADASY LIST','',''],['#','Naam','Default Rs.']];<br>
-&nbsp;&nbsp;(d.masters||[]).forEach(function(m,i){rows.push([i+1,m.name,m.defAmt]);});<br>
-&nbsp;&nbsp;rows.push(['','',''],['MONTHLY DATA','','']);<br>
-&nbsp;&nbsp;Object.keys(d.monthly||{}).sort().forEach(function(mk){<br>
-&nbsp;&nbsp;&nbsp;&nbsp;rows.push(['--- '+mk.replace('_',' ')+' ---','','']);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;rows.push(['#','Naam','Status','Amount']);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;(d.monthly[mk]||[]).forEach(function(c,i){rows.push([i+1,c.name,c.status,c.amount]);});<br>
-&nbsp;&nbsp;&nbsp;&nbsp;rows.push(['','','','']);<br>
-&nbsp;&nbsp;});<br>
-&nbsp;&nbsp;rows.push(['KHARCHA','','','']);<br>
-&nbsp;&nbsp;rows.push(['Vivran','Tarikh','Amount','Month']);<br>
-&nbsp;&nbsp;(d.expenses||[]).forEach(function(e){rows.push([e.name,e.date,e.amount,e.month]);});<br>
-&nbsp;&nbsp;sh.getRange(1,1,rows.length,4).setValues(rows);<br>
-}<br>
-function ok(){return ContentService.createTextOutput(JSON.stringify({status:'ok'})).setMimeType(ContentService.MimeType.JSON);}
-      </div>
-      <label style="font-size:12px;color:#666;font-weight:700">Aapka Web App URL:</label>
-      <input type="text" id="scriptUrl" placeholder="https://script.google.com/macros/s/.../exec"/>
-      <div class="modal-btns">
-        <button class="btn-g" onclick="saveScriptUrl()">Save karein</button>
-        <button class="btn-w" onclick="closeSetupModal()">Baad mein</button>
-      </div>
-    </div>
   </div>
 
   <!-- STATS -->
@@ -327,10 +254,10 @@ let selMonth = '';
 // Apps Script deploy karne ke baad jo URL mile woh paste karein
 // Sabhi devices pe automatically kaam karega — alag setup nahi
 // ================================================================
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxO_Q9seVqTZ6QY6IEpABg-DplGC8M4ChmUeQ672VRXLlUDmNbXCu3Dc-3yy-LFchWhKw/exec';
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzEiR8Ucs1YL1-gyS_9ZtVdJUudj5BjZtkKfDuztsTyAxCsp5QZCCSHJQQvTdSnWocbPA/exec';
 // Example: 'https://script.google.com/macros/s/AKfycbx.../exec'
 
-let scriptURL = (SHEET_URL !== 'https://script.google.com/macros/s/AKfycbxO_Q9seVqTZ6QY6IEpABg-DplGC8M4ChmUeQ672VRXLlUDmNbXCu3Dc-3yy-LFchWhKw/exec') ? SHEET_URL : (localStorage.getItem('mandir_script_url') || '');
+let scriptURL = (SHEET_URL !== 'https://script.google.com/macros/s/AKfycbzEiR8Ucs1YL1-gyS_9ZtVdJUudj5BjZtkKfDuztsTyAxCsp5QZCCSHJQQvTdSnWocbPA/exec') ? SHEET_URL : (localStorage.getItem('mandir_script_url') || '');
 let saveTimer = null;
 
 const MN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -385,9 +312,7 @@ async function init() {
   renderAll();
   populateLedSel();
 
-  if (!scriptURL) {
-    document.getElementById('setupBar').style.display = 'flex';
-  }
+
 }
 
 function loadSampleData() {
@@ -438,7 +363,7 @@ async function saveData() {
 }
 
 async function syncNow() {
-  if (!scriptURL) { showSetupModal(); return; }
+  if (!scriptURL) { showToast('Sheet URL set nahi hai', true); return; }
   showLoading('Sync ho raha hai...');
   try {
     const res = await fetch(scriptURL);
@@ -735,25 +660,7 @@ function printLedger(){
   w.document.close();setTimeout(()=>w.print(),400);
 }
 
-// ============================================================
-// SETUP MODAL
-// ============================================================
-function showSetupModal(){document.getElementById('setupModal').classList.add('show');}
-function closeSetupModal(){document.getElementById('setupModal').classList.remove('show');}
-function saveScriptUrl(){
-  const url=document.getElementById('scriptUrl').value.trim();
-  if(!url||!url.includes('script.google.com')){showToast('Sahi URL daalein!',true);return;}
-  scriptURL=url;
-  localStorage.setItem('mandir_script_url',url);
-  document.getElementById('setupBar').style.display='none';
-  closeSetupModal();
-  // HTML file mein bhi update karne ki yaad dilayen
-  showToast('URL save ho gaya! HTML file mein bhi daalein — neeche dekhen');
-  setTimeout(()=>{
-    alert('IMPORTANT: Permanent karne ke liye HTML file mein\nconst SHEET_URL = \'' + url + '\'\nyeh line update karein — warna doosri device pe kaam nahi karega!');
-    syncNow();
-  },600);
-}
+
 
 // ============================================================
 // PIN
