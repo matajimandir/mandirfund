@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mataji Mandir — Contribution Register</title>
+<title>माता जी मंदिर  — सहयोग राशी Register</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#f5f5f5;color:#111;font-size:14px}
@@ -18,6 +18,8 @@ body{font-family:Arial,sans-serif;background:#f5f5f5;color:#111;font-size:14px}
 .admin-btn.on{background:#E6F1FB;color:#185FA5;border-color:#85B7EB}
 .sync-btn{font-size:11px;padding:5px 12px;border-radius:20px;border:1px solid #34A853;background:#fff;color:#34A853;cursor:pointer;font-weight:600}
 .sync-btn.saving{background:#34A853;color:#fff}
+.sync-btn.offline{border-color:#cc7700;color:#cc7700}
+.sync-btn.error{border-color:#c00;color:#c00}
 .pin-wrap{background:rgba(0,0,0,0.4);padding:2rem 1rem;display:none}
 .pin-box{background:#fff;border-radius:12px;padding:24px 20px;max-width:260px;margin:0 auto;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.15)}
 .pin-box h3{font-size:14px;font-weight:700;margin-bottom:12px;color:#111}
@@ -127,8 +129,8 @@ body{font-family:Arial,sans-serif;background:#f5f5f5;color:#111;font-size:14px}
     <div class="topbar-left">
       <span class="icon">🛕</span>
       <div>
-        <h1>Mataji Mandir</h1>
-        <small>Contribution Register</small>
+        <h1>माता जी मंदिर</h1>
+        <small>सहयोग राशी Register</small>
       </div>
     </div>
     <div class="top-right">
@@ -159,19 +161,19 @@ body{font-family:Arial,sans-serif;background:#f5f5f5;color:#111;font-size:14px}
   </div>
 
   <!-- READONLY BAR -->
-  <div class="ro-bar" id="roBar">👁 Sirf dekhne ka mode — edit ke liye Admin login karein</div>
+  <div class="ro-bar" id="roBar">👁 सिर्फ देखने का मोड — edit ke एडमिन से सम्पर्क करे</div>
 
   <!-- STATS -->
   <div class="stats no-print">
-    <div class="sc"><div class="sl">Is maah prapt yogdan</div><div class="sv g" id="sPaid">₹0</div></div>
-    <div class="sc"><div class="sl">Is maah kharcha</div><div class="sv a" id="sExp">₹0</div></div>
-    <div class="sc"><div class="sl">Purani bachat</div><div class="sv" id="sCarry">₹0</div></div>
-    <div class="sc"><div class="sl">Kul balance</div><div class="sv g" id="sBal">₹0</div></div>
+    <div class="sc"><div class="sl">इस माह का प्राप्त योगदान</div><div class="sv g" id="sPaid">₹0</div></div>
+    <div class="sc"><div class="sl">इस माह खर्चा</div><div class="sv a" id="sExp">₹0</div></div>
+    <div class="sc"><div class="sl">पुरानी बचत</div><div class="sv" id="sCarry">₹0</div></div>
+    <div class="sc"><div class="sl">कुल बचत</div><div class="sv g" id="sBal">₹0</div></div>
   </div>
 
   <!-- NAV -->
   <div class="nav no-print">
-    <div class="nt active" onclick="showTab('yogdan')">सहयोग राशि</div>
+    <div class="nt active" onclick="showTab('yogdan')">योगदान</div>
     <div class="nt admin-only-tab" onclick="showTab('master')" style="display:none">सदस्य सूची</div>
     <div class="nt" onclick="showTab('kharcha')">खर्चा</div>
     <div class="nt" onclick="showTab('ledger')">Ledger / Print</div>
@@ -236,9 +238,25 @@ body{font-family:Arial,sans-serif;background:#f5f5f5;color:#111;font-size:14px}
 
 <script>
 // ============================================================
-// CONFIG — Yahan apna PIN badlein
+// CONFIG
+// PIN change karna ho toh: https://emn178.github.io/online-tools/sha256.html
+// pe apna PIN type karein, jo hash mile woh niche daalein
 // ============================================================
-const PIN = '1108';
+const PIN_HASH = '737c6b9773fa031bee4787ad780d2c9c9ecb3375a7c1f4dbd8047a6cd5c67b4c';
+// Upar wala hash = 1108 ka SHA256
+
+// Secret key jo Google Sheet se match karni chahiye
+const SECRET_KEY = 'MatajiMandir@2026#SecretKey';
+
+// ============================================================
+// SHA256 — PIN verification ke liye
+// ============================================================
+async function sha256(message) {
+  const msgBuffer = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
 
 // ============================================================
 // STATE
@@ -253,7 +271,7 @@ let selMonth = '';
 // Apps Script deploy karne ke baad jo URL mile woh paste karein
 // Sabhi devices pe automatically kaam karega — alag setup nahi
 // ================================================================
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzEiR8Ucs1YL1-gyS_9ZtVdJUudj5BjZtkKfDuztsTyAxCsp5QZCCSHJQQvTdSnWocbPA/exec';
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwBeO7ku2diCu0Vbp14lmXGUNzDpK33DiVF9yF2zB1-Tc9uoF5sjw_ApFftaifdyBBrAQ/exec';
 // Example: 'https://script.google.com/macros/s/AKfycbx.../exec'
 
 let scriptURL = (SHEET_URL !== 'YAHAN_APNA_URL_DAALO') ? SHEET_URL : (localStorage.getItem('mandir_script_url') || '');
@@ -285,7 +303,10 @@ async function init() {
         autoRollover();
         renderAll();
         populateLedSel();
-        showToast('Data load ho gaya! ✓');
+        const lastSync = localStorage.getItem('mandir_last_sync');
+      const syncTime = lastSync ? new Date(lastSync).toLocaleString('hi-IN') : 'pehli baar';
+      updateSyncStatus('saved');
+      showToast('✓ Sheet se data load hua: ' + syncTime);
         return;
       }
     } catch(e) {
@@ -310,6 +331,8 @@ async function init() {
   autoRollover();
   renderAll();
   populateLedSel();
+  updateSyncStatus(navigator.onLine ? 'local' : 'offline');
+  if(!navigator.onLine) showToast('📴 Offline mode — local data dikh raha hai', true);
 
 
 }
@@ -335,37 +358,66 @@ function scheduleSave() {
 
 async function saveData() {
   const payload = {masters, monthly, expenses, selMonth};
-  // Always save to localStorage as backup
+
+  // Hamesha pehle localStorage mein save — offline backup
   localStorage.setItem('mandir_data', JSON.stringify(payload));
+  updateSyncStatus('local');
 
-  if (!scriptURL) return;
-
-  const btn = document.getElementById('syncBtn');
-  btn.textContent = '💾 Saving...';
-  btn.classList.add('saving');
-
-  try {
-    await fetch(scriptURL, {
-      method: 'POST',
-      body: JSON.stringify({action:'save', payload}),
-    });
-    btn.textContent = '✓ Saved';
-    setTimeout(() => {
-      btn.textContent = '🔄 Sync';
-      btn.classList.remove('saving');
-    }, 2000);
-  } catch(e) {
-    btn.textContent = '🔄 Sync';
-    btn.classList.remove('saving');
-    showToast('Sheet save nahi hua — data local mein save hai', true);
+  if (!scriptURL) {
+    updateSyncStatus('offline');
+    return;
   }
+
+  updateSyncStatus('saving');
+  try {
+    const res = await fetch(scriptURL, {
+      method: 'POST',
+      body: JSON.stringify({action:'save', secret: SECRET_KEY, payload}),
+    });
+    const json = await res.json();
+    if(json.status === 'ok') {
+      updateSyncStatus('saved');
+      localStorage.setItem('mandir_last_sync', new Date().toISOString());
+    } else {
+      updateSyncStatus('error');
+    }
+  } catch(e) {
+    // Internet nahi — local mein saved hai, retry karega
+    updateSyncStatus('offline');
+    // Auto retry after 30 seconds
+    setTimeout(() => saveData(), 30000);
+  }
+}
+
+function updateSyncStatus(state) {
+  const btn = document.getElementById('syncBtn');
+  const states = {
+    saving:  { text: '💾 Saving...', cls: 'sync-btn saving',  toast: null },
+    saved:   { text: '✓ Sheet',     cls: 'sync-btn',          toast: null },
+    local:   { text: '📱 Local',    cls: 'sync-btn offline',  toast: null },
+    offline: { text: '📴 Offline',  cls: 'sync-btn offline',  toast: 'Internet nahi — data phone mein safe hai' },
+    error:   { text: '⚠ Error',    cls: 'sync-btn error',    toast: 'Sheet mein save nahi hua' },
+  };
+  const s = states[state] || states.local;
+  btn.textContent = s.text;
+  btn.className = s.cls;
+  if(s.toast) showToast(s.toast, state === 'error');
+  if(state === 'saved') setTimeout(() => { btn.textContent = '🔄 Sync'; btn.className = 'sync-btn'; }, 3000);
 }
 
 async function syncNow() {
   if (!scriptURL) { showToast('Sheet URL set nahi hai', true); return; }
-  showLoading('Sync ho raha hai...');
+
+  // Check internet first
+  if (!navigator.onLine) {
+    showToast('📴 Internet nahi — local data dikh raha hai', true);
+    updateSyncStatus('offline');
+    return;
+  }
+
+  showLoading('Google Sheet se sync ho raha hai...');
   try {
-    const res = await fetch(scriptURL);
+    const res = await fetch(scriptURL + '?t=' + Date.now()); // cache bust
     const text = await res.text();
     const json = JSON.parse(text);
     if (json && json.masters) {
@@ -373,14 +425,22 @@ async function syncNow() {
       monthly = json.monthly || {};
       expenses = json.expenses || [];
       selMonth = json.selMonth || selMonth;
+      // Update local backup too
+      localStorage.setItem('mandir_data', JSON.stringify({masters,monthly,expenses,selMonth}));
+      localStorage.setItem('mandir_last_sync', new Date().toISOString());
       hideLoading();
       autoRollover(); renderAll(); populateLedSel();
-      showToast('Sync ho gaya! ✓');
+      updateSyncStatus('saved');
+      showToast('✓ Sheet se sync ho gaya!');
     } else {
-      hideLoading(); showToast('Sheet mein data nahi mila');
+      hideLoading();
+      showToast('Sheet mein data nahi mila — local data dikh raha hai');
+      updateSyncStatus('local');
     }
   } catch(e) {
-    hideLoading(); showToast('Sync nahi hua — internet check karein', true);
+    hideLoading();
+    updateSyncStatus('offline');
+    showToast('📴 Sheet connect nahi hua — local data safe hai', true);
   }
 }
 
@@ -395,6 +455,8 @@ function autoRollover() {
 
 function generateMonth(mk_) {
   if (monthly[mk_]) return;
+  // Sirf active sadasy naye mahine mein aayenge
+  // Inactive sadasy ka purana data safe rahega
   monthly[mk_] = masters.filter(m => m.active).map(m => ({
     id: Date.now() + Math.random(), masterId: m.id,
     name: m.name, amount: m.defAmt, status: 'unpaid'
@@ -479,7 +541,9 @@ function delC(id) {
 function renderMaster() {
   const s = document.getElementById('mSearch').value.toLowerCase();
   const fl = masters.filter(m=>m.name.toLowerCase().includes(s));
-  document.getElementById('mCnt').textContent = masters.filter(m=>m.active).length+'/60';
+  const activeCount = masters.filter(m=>m.active).length;
+  const inactiveCount = masters.filter(m=>!m.active).length;
+  document.getElementById('mCnt').textContent = activeCount+' active'+(inactiveCount>0?' | '+inactiveCount+' inactive':'');
   const hdr = document.getElementById('mHdr');
   if(isAdmin){
     hdr.style.gridTemplateColumns='24px 1fr 100px 60px 30px';
@@ -491,12 +555,12 @@ function renderMaster() {
   if(!fl.length){document.getElementById('masterList').innerHTML='<div class="empty">Koi sadasy nahi</div>';return;}
   if(isAdmin){
     document.getElementById('masterList').innerHTML=fl.map((m,i)=>`
-      <div class="row" style="grid-template-columns:24px 1fr 100px 60px 30px;gap:6px">
+      <div class="row" style="grid-template-columns:24px 1fr 100px 70px 50px;gap:6px;opacity:${m.active?1:0.5}">
         <span class="snum">${i+1}</span>
-        <div class="nm">${m.name}</div>
-        <div style="text-align:center"><input class="amt-inp" type="number" value="${m.defAmt}" min="50" max="100000" style="width:72px" onchange="updMasterAmt(${m.id},this.value)"/></div>
-        <div><span class="badge paid">Active</span></div>
-        <button class="del-btn" onclick="delMaster(${m.id})">×</button>
+        <div class="nm" style="color:${m.active?'#111':'#999'}">${m.name}</div>
+        <div style="text-align:center">${m.active?`<input class="amt-inp" type="number" value="${m.defAmt}" min="50" max="100000" style="width:72px" onchange="updMasterAmt(${m.id},this.value)"/>`:`<span style="font-size:12px;color:#aaa">₹${m.defAmt}</span>`}</div>
+        <div><span class="badge ${m.active?'paid':'unpaid'}">${m.active?'Active':'Inactive'}</span></div>
+        <button style="font-size:10px;padding:2px 6px;border-radius:6px;border:1px solid #ddd;background:#fff;cursor:pointer;color:${m.active?'#c00':'#0F6E56'}" onclick="delMaster(${m.id})">${m.active?'Hatao':'Wapas'}</button>
       </div>`).join('');
   } else {
     document.getElementById('masterList').innerHTML=fl.map((m,i)=>`
@@ -516,8 +580,12 @@ function addMaster() {
   if(masters.filter(m=>m.active).length>=60){showToast('60 sadasy ki limit!');return;}
   const mem={id:Date.now(),name,defAmt:amt,active:true};
   masters.push(mem);
-  Object.keys(monthly).forEach(mk_=>{
-    monthly[mk_].push({id:Date.now()+Math.random(),masterId:mem.id,name,amount:amt,status:'unpaid'});
+  // Sirf current aur future months mein add karo
+  // Purane months mein nahi — warna carry forward bigad jayega
+  const allKeys = Object.keys(monthly).sort();
+  const curKey = curMK();
+  allKeys.filter(k => k >= curKey).forEach(mk_=>{
+    monthly[mk_].push({id:Date.now()+Math.random(),masterId:mem.id,name:name,amount:amt,status:'unpaid'});
   });
   document.getElementById('mName').value='';
   renderAll();scheduleSave();showToast(name+' add ho gaya!');
@@ -528,9 +596,18 @@ function updMasterAmt(id,v){
 }
 function delMaster(id){
   if(!isAdmin)return;
-  masters=masters.filter(m=>m.id!==id);
-  Object.keys(monthly).forEach(mk_=>{monthly[mk_]=monthly[mk_].filter(c=>c.masterId!==id);});
-  renderAll();scheduleSave();showToast('Sadasy hataya gaya');
+  const m=masters.find(x=>x.id===id);
+  if(!m)return;
+  if(m.active){
+    // Sirf inactive karo — purana data safe rahega
+    if(!confirm(m.name+' ko inactive karein?\nPurana contribution data safe rahega.\nNaye mahine mein nahi aayenge.')) return;
+    m.active=false;
+  } else {
+    // Wapas active karo
+    m.active=true;
+  }
+  renderAll();scheduleSave();
+  showToast(m.name+(m.active?' wapas active ho gaya!':' inactive ho gaya — data safe hai'));
 }
 
 // ============================================================
@@ -683,18 +760,21 @@ function ep(v){
   if(v==='c')pe='';else if(v==='d')pe=pe.slice(0,-1);
   else if(pe.length<4)pe+=v;
   for(let i=0;i<4;i++)document.getElementById('d'+i).classList.toggle('f',i<pe.length);
-  if(pe.length===4){
-    if(pe===PIN){
-      isAdmin=true;
-      document.getElementById('pinWrap').style.display='none';
-      document.getElementById('adminBtn').className='admin-btn on';
-      document.getElementById('adminBtn').textContent='🔓 Admin';
-      document.getElementById('roBar').style.display='none';
-      applyRoleUI();showToast('Admin mode ON');
-    } else {
-      err.textContent='Galat PIN, dobara try karein';
-      pe='';for(let i=0;i<4;i++)document.getElementById('d'+i).classList.remove('f');
-    }
+  if(pe.length===4){ verifyPin(pe); }
+}
+async function verifyPin(entered){
+  const err=document.getElementById('perr');
+  const hash = await sha256(entered);
+  if(hash===PIN_HASH){
+    isAdmin=true;
+    document.getElementById('pinWrap').style.display='none';
+    document.getElementById('adminBtn').className='admin-btn on';
+    document.getElementById('adminBtn').textContent='🔓 Admin';
+    document.getElementById('roBar').style.display='none';
+    applyRoleUI();showToast('Admin mode ON');
+  } else {
+    err.textContent='Galat PIN, dobara try karein';
+    pe='';for(let i=0;i<4;i++)document.getElementById('d'+i).classList.remove('f');
   }
 }
 function applyRoleUI(){
@@ -736,6 +816,8 @@ function showToast(msg,err){
 }
 
 window.onload=init;
+window.addEventListener('online',  () => { updateSyncStatus('local'); showToast('✓ Internet wapas aa gaya — sync ho raha hai'); saveData(); });
+window.addEventListener('offline', () => { updateSyncStatus('offline'); showToast('📴 Internet gaya — data local mein safe hai', true); });
 </script>
 </body>
 </html>
