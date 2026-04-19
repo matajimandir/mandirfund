@@ -182,6 +182,8 @@ body{font-family:Arial,sans-serif;background:#f5f5f5;color:#111;font-size:14px}
         <li>Deploy karein → URL copy karein</li>
         <li>Woh URL niche paste karein</li>
       </ol>
+      <p><strong>Step 7 ke baad — HTML file mein URL save karein:</strong></p>
+      <p style="font-size:12px;color:#c00;background:#fff8e1;padding:8px;border-radius:6px;border:1px solid #fac775">Sabhi devices pe kaam karne ke liye: HTML file Notepad mein kholo → <code>YAHAN_APNA_URL_DAALO</code> dhundein → wahan apna URL paste karein → file save karein → GitHub pe dobara upload karein</p>
       <p><strong>Apps Script code (copy karein):</strong></p>
       <div style="background:#f5f5f5;border-radius:6px;padding:10px;font-size:11px;font-family:monospace;margin-bottom:12px;max-height:120px;overflow-y:auto;line-height:1.6;border:1px solid #ddd">
 function doPost(e){<br>
@@ -320,7 +322,15 @@ let masters = [];
 let monthly = {};
 let expenses = [];
 let selMonth = '';
-let scriptURL = localStorage.getItem('mandir_script_url') || '';
+// ================================================================
+// GOOGLE SHEET URL — Sirf yahan ek baar URL daalein
+// Apps Script deploy karne ke baad jo URL mile woh paste karein
+// Sabhi devices pe automatically kaam karega — alag setup nahi
+// ================================================================
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxO_Q9seVqTZ6QY6IEpABg-DplGC8M4ChmUeQ672VRXLlUDmNbXCu3Dc-3yy-LFchWhKw/exec';
+// Example: 'https://script.google.com/macros/s/AKfycbx.../exec'
+
+let scriptURL = (SHEET_URL !== 'https://script.google.com/macros/s/AKfycbxO_Q9seVqTZ6QY6IEpABg-DplGC8M4ChmUeQ672VRXLlUDmNbXCu3Dc-3yy-LFchWhKw/exec') ? SHEET_URL : (localStorage.getItem('mandir_script_url') || '');
 let saveTimer = null;
 
 const MN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -737,8 +747,12 @@ function saveScriptUrl(){
   localStorage.setItem('mandir_script_url',url);
   document.getElementById('setupBar').style.display='none';
   closeSetupModal();
-  showToast('URL save ho gaya! Sync ho raha hai...');
-  setTimeout(()=>syncNow(),500);
+  // HTML file mein bhi update karne ki yaad dilayen
+  showToast('URL save ho gaya! HTML file mein bhi daalein — neeche dekhen');
+  setTimeout(()=>{
+    alert('IMPORTANT: Permanent karne ke liye HTML file mein\nconst SHEET_URL = \'' + url + '\'\nyeh line update karein — warna doosri device pe kaam nahi karega!');
+    syncNow();
+  },600);
 }
 
 // ============================================================
