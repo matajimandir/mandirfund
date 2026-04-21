@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>माता जी मंदिर  — सहयोग राशी Register</title>
+<title>Mataji Mandir — Contribution Register</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#f5f5f5;color:#111;font-size:14px}
@@ -89,6 +89,13 @@ body{font-family:Arial,sans-serif;background:#f5f5f5;color:#111;font-size:14px}
 .spinner{width:36px;height:36px;border:3px solid #eee;border-top-color:#1D9E75;border-radius:50%;animation:spin 0.8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-text{font-size:13px;color:#666}
+.wa-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;align-items:center;justify-content:center;padding:1rem}
+.wa-box{background:#fff;border-radius:14px;padding:20px;max-width:340px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,0.18)}
+.wa-box h3{font-size:14px;font-weight:700;margin-bottom:10px;color:#111}
+.wa-preview{background:#E8F5E9;border-radius:10px;padding:12px;font-size:12px;color:#1a1a1a;line-height:1.7;margin-bottom:14px;border:1px solid #C8E6C9;white-space:pre-wrap}
+.wa-btns{display:flex;gap:8px}
+.wa-send{flex:1;font-size:13px;padding:9px;border-radius:8px;border:none;background:#25D366;color:#fff;cursor:pointer;font-weight:700}
+.wa-skip{font-size:13px;padding:9px 14px;border-radius:8px;border:1px solid #ddd;background:#fff;color:#555;cursor:pointer}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1D9E75;color:#fff;font-size:13px;padding:8px 20px;border-radius:20px;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap;z-index:100;font-weight:600}
 .toast.show{opacity:1}
 .toast.err{background:#c00}
@@ -129,8 +136,8 @@ body{font-family:Arial,sans-serif;background:#f5f5f5;color:#111;font-size:14px}
     <div class="topbar-left">
       <span class="icon">🛕</span>
       <div>
-        <h1>माता जी मंदिर</h1>
-        <small>सहयोग राशी Register</small>
+        <h1>Mataji Mandir</h1>
+        <small>Contribution Register</small>
       </div>
     </div>
     <div class="top-right">
@@ -161,21 +168,21 @@ body{font-family:Arial,sans-serif;background:#f5f5f5;color:#111;font-size:14px}
   </div>
 
   <!-- READONLY BAR -->
-  <div class="ro-bar" id="roBar">👁 सिर्फ देखने का मोड — edit ke एडमिन से सम्पर्क करे</div>
+  <div class="ro-bar" id="roBar">👁 Sirf dekhne ka mode — edit ke liye Admin login karein</div>
 
   <!-- STATS -->
   <div class="stats no-print">
-    <div class="sc"><div class="sl">इस माह का प्राप्त योगदान</div><div class="sv g" id="sPaid">₹0</div></div>
-    <div class="sc"><div class="sl">इस माह खर्चा</div><div class="sv a" id="sExp">₹0</div></div>
-    <div class="sc"><div class="sl">पुरानी बचत</div><div class="sv" id="sCarry">₹0</div></div>
-    <div class="sc"><div class="sl">कुल बचत</div><div class="sv g" id="sBal">₹0</div></div>
+    <div class="sc"><div class="sl">Is maah prapt yogdan</div><div class="sv g" id="sPaid">₹0</div></div>
+    <div class="sc"><div class="sl">Is maah kharcha</div><div class="sv a" id="sExp">₹0</div></div>
+    <div class="sc"><div class="sl">Purani bachat</div><div class="sv" id="sCarry">₹0</div></div>
+    <div class="sc"><div class="sl">Kul balance</div><div class="sv g" id="sBal">₹0</div></div>
   </div>
 
   <!-- NAV -->
   <div class="nav no-print">
-    <div class="nt active" onclick="showTab('yogdan')">योगदान</div>
-    <div class="nt admin-only-tab" onclick="showTab('master')" style="display:none">सदस्य सूची</div>
-    <div class="nt" onclick="showTab('kharcha')">खर्चा</div>
+    <div class="nt active" onclick="showTab('yogdan')">Yogdan</div>
+    <div class="nt admin-only-tab" onclick="showTab('master')" style="display:none">Sadasy List</div>
+    <div class="nt" onclick="showTab('kharcha')">Kharcha</div>
     <div class="nt" onclick="showTab('ledger')">Ledger / Print</div>
   </div>
 
@@ -197,8 +204,9 @@ body{font-family:Arial,sans-serif;background:#f5f5f5;color:#111;font-size:14px}
   <!-- MASTER TAB -->
   <div id="tab-master" class="tc">
     <div class="add-bar" id="addMasterBar">
-      <div class="fg"><label>Sadasy ka naam</label><input type="text" id="mName" placeholder="Naam likhein" style="width:160px"/></div>
-      <div class="fg"><label>Default ₹</label><input type="number" id="mAmt" value="100" min="50" max="100000" style="width:80px"/></div>
+      <div class="fg"><label>Sadasy ka naam</label><input type="text" id="mName" placeholder="Naam likhein" style="width:140px"/></div>
+      <div class="fg"><label>Mobile no.</label><input type="tel" id="mMobile" placeholder="9876543210" maxlength="10" style="width:110px"/></div>
+      <div class="fg"><label>Default ₹</label><input type="number" id="mAmt" value="100" min="50" max="100000" style="width:75px"/></div>
       <button class="btn-g" onclick="addMaster()">Jodein</button>
     </div>
     <div class="search-row">
@@ -236,13 +244,27 @@ body{font-family:Arial,sans-serif;background:#f5f5f5;color:#111;font-size:14px}
 </div>
 <div class="toast" id="toast"></div>
 
+<!-- WHATSAPP RECEIPT MODAL -->
+<div class="wa-modal" id="waModal">
+  <div class="wa-box">
+    <h3>📲 WhatsApp Receipt bhejein?</h3>
+    <div class="wa-preview" id="waPreview"></div>
+    <div class="wa-btns">
+      <button class="wa-send" onclick="sendWAReceipt()">WhatsApp bhejein</button>
+      <button class="wa-skip" onclick="closeWAModal()">Skip</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ============================================================
 // CONFIG
-// pe apna PIN type karein, jo hash mile woh niche daalein
 // ============================================================
-const PIN_HASH = '737c6b9773fa031bee4787ad780d2c9c9ecb3375a7c1f4dbd8047a6cd5c67b4c';
+const PIN_HASH = '614f5408eab24ce643b37803e6c4808f29824b41045ec95b39f33db7c7efa367';
 
+// Lockout system
+let failedAttempts = 0;
+let lockUntil = 0; // timestamp
 
 // Secret key jo Google Sheet se match karni chahiye
 const SECRET_KEY = 'MatajiMandir@2026#SecretKey';
@@ -271,7 +293,8 @@ let selMonth = '';
 // Sabhi devices pe automatically kaam karega — alag setup nahi
 // ================================================================
 const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwBeO7ku2diCu0Vbp14lmXGUNzDpK33DiVF9yF2zB1-Tc9uoF5sjw_ApFftaifdyBBrAQ/exec';
-// Example: 'https://script.google.com/macros/s/AKfycbx.../exec'
+
+const SITE_URL = 'https://matajimandir.github.io/mandirfund/';
 
 let scriptURL = (SHEET_URL !== 'YAHAN_APNA_URL_DAALO') ? SHEET_URL : (localStorage.getItem('mandir_script_url') || '');
 let saveTimer = null;
@@ -526,7 +549,58 @@ function applyDefAmt() {
 function togStatus(id) {
   if(!isAdmin){showToast('Sirf admin badal sakta hai');return;}
   const c=(monthly[selMonth]||[]).find(x=>x.id==id);
-  if(c){c.status=c.status==='paid'?'unpaid':'paid';renderYogdan();updateStats();scheduleSave();}
+  if(!c) return;
+  const wasPaid = c.status === 'paid';
+  c.status = wasPaid ? 'unpaid' : 'paid';
+  renderYogdan(); updateStats(); scheduleSave();
+  // Jab paid mark karein toh WhatsApp receipt bhejne ka option
+  if(!wasPaid && c.status === 'paid') {
+    showReceiptPrompt(c);
+  }
+}
+
+function showReceiptPrompt(c) {
+  const modal = document.getElementById('waModal');
+  const month = selMonth.replace('_',' ');
+  const siteUrl = SITE_URL !== 'YAHAN_APNI_SITE_URL_DAALO' ? SITE_URL : window.location.href;
+  // Preview message
+  const preview = `🛕 जय माता दी! 🛕
+
+श्री ${c.name} जी,
+
+माताजी मंदिर सहयोग राशि के रूप में आपका ${month} का सहयोग ₹${c.amount} प्राप्त हुआ है। 🙏
+
+📊 पूरा हिसाब देखें:
+${siteUrl}`;
+  document.getElementById('waPreview').textContent = preview;
+  modal.style.display = 'flex';
+  modal.dataset.name = c.name;
+  modal.dataset.month = month;
+  modal.dataset.amt = c.amount;
+}
+
+function sendWAReceipt() {
+  const modal = document.getElementById('waModal');
+  const name = modal.dataset.name;
+  const month = modal.dataset.month;
+  const amt = modal.dataset.amt;
+  const siteUrl = SITE_URL !== 'YAHAN_APNI_SITE_URL_DAALO' ? SITE_URL : window.location.href;
+  const msg = `🛕 *जय माता दी!* 🛕
+
+श्री ${name} जी,
+
+माताजी मंदिर सहयोग राशि के रूप में आपका *${month}* का सहयोग *₹${amt}* प्राप्त हुआ है। 🙏
+
+📊 मंदिर का पूरा हिसाब और रसीद देखने के लिए नीचे क्लिक करें:
+${siteUrl}
+
+_जय माता दी_ 🔔`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+  closeWAModal();
+}
+
+function closeWAModal() {
+  document.getElementById('waModal').style.display = 'none';
 }
 function delC(id) {
   if(!isAdmin)return;
@@ -753,8 +827,37 @@ function toggleAdmin(){
   pe='';for(let i=0;i<4;i++)document.getElementById('d'+i).classList.remove('f');
   document.getElementById('perr').textContent='';
 }
-function closePinWrap(){document.getElementById('pinWrap').style.display='none';pe='';}
+function closePinWrap(){document.getElementById('pinWrap').style.display='none';pe='';clearInterval(lockTimer);}
+
+// Live countdown update
+let lockTimer = null;
+function startLockCountdown(){
+  clearInterval(lockTimer);
+  lockTimer = setInterval(() => {
+    if(Date.now() >= lockUntil){
+      clearInterval(lockTimer);
+      document.getElementById('perr').textContent='';
+      return;
+    }
+    if(document.getElementById('pinWrap').style.display !== 'none'){
+      const remaining = Math.ceil((lockUntil - Date.now()) / 1000);
+      const mins = Math.floor(remaining / 60);
+      const secs = remaining % 60;
+      const timeStr = mins > 0 ? mins + 'm ' + secs + 's' : secs + 's';
+      document.getElementById('perr').textContent = '🔒 ' + timeStr + ' baad try karein';
+    }
+  }, 1000);
+}
 function ep(v){
+  // Lockout check
+  if(Date.now() < lockUntil) {
+    const remaining = Math.ceil((lockUntil - Date.now()) / 1000);
+    const mins = Math.floor(remaining / 60);
+    const secs = remaining % 60;
+    const timeStr = mins > 0 ? mins + ' minute ' + secs + ' second' : secs + ' second';
+    document.getElementById('perr').textContent = '🔒 ' + timeStr + ' baad try karein';
+    return;
+  }
   const err=document.getElementById('perr');err.textContent='';
   if(v==='c')pe='';else if(v==='d')pe=pe.slice(0,-1);
   else if(pe.length<4)pe+=v;
@@ -765,6 +868,9 @@ async function verifyPin(entered){
   const err=document.getElementById('perr');
   const hash = await sha256(entered);
   if(hash===PIN_HASH){
+    // Sahi PIN — reset lockout
+    failedAttempts = 0;
+    lockUntil = 0;
     isAdmin=true;
     document.getElementById('pinWrap').style.display='none';
     document.getElementById('adminBtn').className='admin-btn on';
@@ -772,8 +878,32 @@ async function verifyPin(entered){
     document.getElementById('roBar').style.display='none';
     applyRoleUI();showToast('Admin mode ON');
   } else {
-    err.textContent='Galat PIN, dobara try karein';
+    // Galat PIN
+    failedAttempts++;
     pe='';for(let i=0;i<4;i++)document.getElementById('d'+i).classList.remove('f');
+
+    if(failedAttempts >= 10) {
+      // 10 galat try — 1 ghanta lock
+      lockUntil = Date.now() + (60 * 60 * 1000);
+      err.textContent = '🔒 10 galat try! 1 ghante ke liye band hai';
+      showToast('10 galat try — 1 ghanta lock!', true);
+      startLockCountdown();
+    } else if(failedAttempts >= 5) {
+      // 5 galat try — 5 minute lock
+      lockUntil = Date.now() + (5 * 60 * 1000);
+      err.textContent = '🔒 5 galat try! 5 minute ke liye band hai';
+      showToast('5 galat try — 5 minute lock!', true);
+      startLockCountdown();
+    } else if(failedAttempts >= 3) {
+      // 3 galat try — 30 second lock
+      lockUntil = Date.now() + (30 * 1000);
+      err.textContent = '🔒 3 galat try! 30 second ke liye band hai';
+      showToast('3 galat try — 30 second lock!', true);
+      startLockCountdown();
+    } else {
+      const remaining = 3 - failedAttempts;
+      err.textContent = 'Galat PIN — ' + remaining + ' try baaki hain';
+    }
   }
 }
 function applyRoleUI(){
