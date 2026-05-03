@@ -259,6 +259,8 @@ body{font-family:Arial,sans-serif;background:#f5f5f5;color:#111;font-size:14px}
 <script>
 // ============================================================
 // CONFIG
+// PIN change karna ho toh: https://emn178.github.io/online-tools/sha256.html
+// pe apna PIN type karein, jo hash mile woh niche daalein
 // ============================================================
 const PIN_HASH = '614f5408eab24ce643b37803e6c4808f29824b41045ec95b39f33db7c7efa367';
 
@@ -294,7 +296,9 @@ let selMonth = '';
 // ================================================================
 const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwBeO7ku2diCu0Vbp14lmXGUNzDpK33DiVF9yF2zB1-Tc9uoF5sjw_ApFftaifdyBBrAQ/exec';
 
-const SITE_URL = 'https://matajimandir.github.io/mandirfund/';
+// Aapki website ka URL — WhatsApp message mein jayega
+// GitHub Pages use kar rahe hain toh: 'https://aapkausername.github.io/mandir'
+const SITE_URL = 'YAHAN_APNI_SITE_URL_DAALO';
 
 let scriptURL = (SHEET_URL !== 'YAHAN_APNA_URL_DAALO') ? SHEET_URL : (localStorage.getItem('mandir_script_url') || '');
 let saveTimer = null;
@@ -471,8 +475,10 @@ async function syncNow() {
 // ============================================================
 function autoRollover() {
   const cmk = curMK();
+  // Naya mahina generate karo agar nahi hai
   if (!monthly[cmk]) { generateMonth(cmk); }
-  if (!selMonth || !monthly[selMonth]) selMonth = cmk;
+  // Hamesha current month select karo — chahe Sheet se kuch bhi aaye
+  selMonth = cmk;
 }
 
 function generateMonth(mk_) {
@@ -493,7 +499,8 @@ function renderAll() {
 }
 
 function renderMonthPills() {
-  const keys = Object.keys(monthly).sort();
+  // Latest mahina pehle dikhe, purane baad mein
+  const keys = Object.keys(monthly).sort().reverse();
   document.getElementById('monthPills').innerHTML = keys.map(k =>
     `<button class="mp${k===selMonth?' active':''}" onclick="selMon('${k}')">${mkL(k)}</button>`
   ).join('');
