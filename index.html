@@ -264,6 +264,7 @@ body{font-family:Arial,sans-serif;background:#f5f5f5;color:#111;font-size:14px}
 // ============================================================
 const PIN_HASH = '614f5408eab24ce643b37803e6c4808f29824b41045ec95b39f33db7c7efa367';
 
+
 // Lockout system
 let failedAttempts = 0;
 let lockUntil = 0; // timestamp
@@ -505,7 +506,7 @@ function renderMonthPills() {
     `<button class="mp${k===selMonth?' active':''}" onclick="selMon('${k}')">${mkL(k)}</button>`
   ).join('');
 }
-function selMon(k){selMonth=k;renderYogdan();updateStats();}
+function selMon(k){selMonth=k;renderMonthPills();renderYogdan();updateStats();}
 
 // ============================================================
 // YOGDAN
