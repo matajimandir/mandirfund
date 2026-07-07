@@ -10,9 +10,9 @@ body{font-family:Arial,sans-serif;background:#f5f5f5;color:#111;font-size:14px}
 .app{max-width:700px;margin:0 auto;background:#fff;min-height:100vh;border-left:1px solid #ddd;border-right:1px solid #ddd}
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#fff;border-bottom:1px solid #eee;position:sticky;top:0;z-index:10}
 .topbar-left{display:flex;align-items:center;gap:10px}
-.topbar-left .icon{font-size:22px}
-.topbar-left h1{font-size:15px;font-weight:700;color:#111}
-.topbar-left small{font-size:11px;color:#777;display:block}
+.topbar-left .icon{font-size:30px}
+.topbar-left h1{font-size:20px;font-weight:700;color:#111}
+.topbar-left small{font-size:13px;color:#777;display:block}
 .top-right{display:flex;gap:8px;align-items:center}
 .admin-btn{font-size:11px;padding:5px 14px;border-radius:20px;border:1px solid #ccc;background:#fff;color:#555;cursor:pointer;font-weight:600}
 .admin-btn.on{background:#E6F1FB;color:#185FA5;border-color:#85B7EB}
@@ -35,11 +35,11 @@ body{font-family:Arial,sans-serif;background:#f5f5f5;color:#111;font-size:14px}
 .ro-bar{background:#E6F1FB;color:#185FA5;font-size:12px;padding:6px 16px;text-align:center;border-bottom:1px solid #B5D4F4}
 
 
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px 16px}
-.sc{background:#f7f7f7;border-radius:8px;padding:10px 12px}
-.sl{font-size:11px;color:#888;margin-bottom:3px}
-.sv{font-size:18px;font-weight:700;color:#111}
-.sv.g{color:#0F6E56}.sv.r{color:#c00}.sv.a{color:#854F0B}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 16px}
+.sc{background:#fff;border-radius:10px;padding:14px 16px;border:1.5px solid #e0e0e0;box-shadow:0 2px 6px rgba(0,0,0,0.07)}
+.sl{font-size:13px;font-weight:600;color:#444;margin-bottom:6px}
+.sv{font-size:26px;font-weight:800;color:#111}
+.sv.g{color:#0a7a52}.sv.r{color:#c00}.sv.a{color:#7a4500}
 .nav{display:flex;border-bottom:1px solid #eee;overflow-x:auto;background:#fff;position:sticky;top:57px;z-index:9}
 .nt{font-size:12px;padding:10px 14px;cursor:pointer;color:#888;border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0;font-weight:600}
 .nt.active{color:#111;border-bottom-color:#1D9E75}
@@ -130,8 +130,7 @@ body{font-family:Arial,sans-serif;background:#f5f5f5;color:#111;font-size:14px}
     <div class="spinner"></div>
     <div class="loading-text" id="loadingText">Data load ho raha hai...</div>
   </div>
-
-  <!-- TOPBAR -->
+<!-- TOPBAR -->
   <div class="topbar no-print">
     <div class="topbar-left">
       <span class="icon">🛕</span>
@@ -264,7 +263,6 @@ body{font-family:Arial,sans-serif;background:#f5f5f5;color:#111;font-size:14px}
 // ============================================================
 const PIN_HASH = '614f5408eab24ce643b37803e6c4808f29824b41045ec95b39f33db7c7efa367';
 
-
 // Lockout system
 let failedAttempts = 0;
 let lockUntil = 0; // timestamp
@@ -299,12 +297,23 @@ const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwBeO7ku2diCu0Vbp14lm
 
 // Aapki website ka URL — WhatsApp message mein jayega
 // GitHub Pages use kar rahe hain toh: 'https://aapkausername.github.io/mandir'
-const SITE_URL = 'YAHAN_APNI_SITE_URL_DAALO';
+const SITE_URL = 'https://matajimandir.github.io/mandirfund/';
 
 let scriptURL = (SHEET_URL !== 'YAHAN_APNA_URL_DAALO') ? SHEET_URL : (localStorage.getItem('mandir_script_url') || '');
 let saveTimer = null;
 
 const MN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+// Months ko sahi chronological order mein sort karo
+// .sort() se alphabetical hota hai jo galat hai — April, July, June, May
+function sortMonthKeys(keys) {
+  return keys.slice().sort(function(a, b) {
+    const [am, ay] = a.split('_');
+    const [bm, by] = b.split('_');
+    if (ay !== by) return parseInt(ay) - parseInt(by);
+    return MN.indexOf(am) - MN.indexOf(bm);
+  });
+}
 function mk(m,y){return m+'_'+y}
 function mkL(k){const[m,y]=k.split('_');return m+' '+y}
 function curMK(){const d=new Date();return mk(MN[d.getMonth()],d.getFullYear())}
@@ -500,8 +509,8 @@ function renderAll() {
 }
 
 function renderMonthPills() {
-  // Latest mahina pehle dikhe, purane baad mein
-  const keys = Object.keys(monthly).sort().reverse();
+  // Latest mahina pehle dikhe, purane baad mein — chronological reverse
+  const keys = sortMonthKeys(Object.keys(monthly)).reverse();
   document.getElementById('monthPills').innerHTML = keys.map(k =>
     `<button class="mp${k===selMonth?' active':''}" onclick="selMon('${k}')">${mkL(k)}</button>`
   ).join('');
@@ -663,9 +672,13 @@ function addMaster() {
   masters.push(mem);
   // Sirf current aur future months mein add karo
   // Purane months mein nahi — warna carry forward bigad jayega
-  const allKeys = Object.keys(monthly).sort();
+  const allKeys = sortMonthKeys(Object.keys(monthly));
   const curKey = curMK();
-  allKeys.filter(k => k >= curKey).forEach(mk_=>{
+  allKeys.filter(k => {
+    const [km,ky]=k.split('_'); const [cm,cy]=curKey.split('_');
+    if(parseInt(ky)!==parseInt(cy)) return parseInt(ky)>=parseInt(cy);
+    return MN.indexOf(km)>=MN.indexOf(cm);
+  }).forEach(mk_=>{
     monthly[mk_].push({id:Date.now()+Math.random(),masterId:mem.id,name:name,amount:amt,status:'unpaid'});
   });
   document.getElementById('mName').value='';
@@ -736,7 +749,7 @@ function delK(id){
 // STATS + CARRY FORWARD
 // ============================================================
 function getCarry(mk_){
-  const keys=Object.keys(monthly).sort();
+  const keys=sortMonthKeys(Object.keys(monthly)); // chronological order — sahi carry forward
   const idx=keys.indexOf(mk_);if(idx<=0)return 0;
   let carry=0;
   for(let i=0;i<idx;i++){
@@ -767,7 +780,7 @@ function updateStats(){
 function populateLedSel(){
   const sel=document.getElementById('ledSel');
   const cur=sel.value;
-  const keys=Object.keys(monthly).sort();
+  const keys=sortMonthKeys(Object.keys(monthly));
   sel.innerHTML=keys.map(k=>`<option value="${k}">${mkL(k)}</option>`).join('');
   if(cur&&keys.includes(cur))sel.value=cur;
   else if(keys.length)sel.value=keys[keys.length-1];
